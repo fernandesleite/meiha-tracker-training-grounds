@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#1F1D39</color>
+    <color name="colorPrimaryDark">#131222</color>
+    <color name="colorAccent">#4447FB</color>
+    <color name="text_primary">#ffffff</color>
+    <color name="text_secondary">#dddddd</color>
+    <color name="ic_toWatch">#FFFFFF</color>
+    <color name="ic_watched">#66B266</color>
+</resources>
