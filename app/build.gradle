@@ -16,10 +16,6 @@ android {
     compileSdkVersion 31
     buildToolsVersion "30.0.3"
 
-    dataBinding {
-        enabled = true
-    }
-
     viewBinding {
         enabled = true
     }

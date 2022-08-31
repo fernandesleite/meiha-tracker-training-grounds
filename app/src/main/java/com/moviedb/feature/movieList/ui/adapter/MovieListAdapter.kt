@@ -4,8 +4,6 @@ import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
@@ -14,14 +12,46 @@ import androidx.recyclerview.widget.RecyclerView
 import com.moviedb.R
 import com.moviedb.databinding.ItemListMovieBinding
 import com.moviedb.persistence.model.Movie
+import com.moviedb.util.BindingUtils
 import com.moviedb.util.KeyboardBehaviour
 
 class MovieListAdapter : ListAdapter<Movie, MovieListAdapter.MovieViewHolder>(DiffCallback) {
     class MovieViewHolder(private val binding: ItemListMovieBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(movie: Movie) {
-            binding.movie = movie
-            binding.executePendingBindings()
+            binding.apply {
+                imagePoster.contentDescription = movie.title
+                movieTitle.text = movie.title
+                voteScore.text = movie.vote_average.toString()
+                genreList.text = movie.genre_ids?.joinToString()
+
+                setWatchedIconVisibility(movie)
+                navigateToMovieDetails(movie)
+
+                BindingUtils.bindImage(imagePoster, movie.poster_path)
+                BindingUtils.bindMovieDateYear(movieReleaseDate, movie.release_date)
+            }
+        }
+
+        private fun navigateToMovieDetails(movie: Movie) {
+            itemView.setOnClickListener { view ->
+                val bundle = bundleOf("movieId" to movie.id)
+                view.findNavController().navigate(R.id.movieDetailsFragment, bundle)
+                KeyboardBehaviour.hideKeyboard(view.context as Activity)
+            }
+        }
+
+        private fun ItemListMovieBinding.setWatchedIconVisibility(movie: Movie) {
+            when (movie.category) {
+                1 -> watchImage.visibility = View.VISIBLE
+                2 -> {
+                    watchImage.visibility = View.VISIBLE
+                    watchImage.setImageResource(R.drawable.ic_pending_18dp)
+                }
+                else -> {
+                    watchImage.visibility = View.GONE
+                }
+            }
         }
     }
 
@@ -63,27 +93,6 @@ class MovieListAdapter : ListAdapter<Movie, MovieListAdapter.MovieViewHolder>(Di
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         val movie = getItem(position)
-        holder.itemView.findViewById<TextView>(R.id.genre_list).text =
-            movie.genre_ids?.joinToString()
-        when (movie.category) {
-            1 -> holder.itemView.findViewById<ImageView>(R.id.watch_image).visibility = View.VISIBLE
-            2 -> {
-                holder.itemView.findViewById<ImageView>(R.id.watch_image).visibility = View.VISIBLE
-                holder.itemView.findViewById<ImageView>(R.id.watch_image)
-                    .setImageResource(R.drawable.ic_pending_18dp)
-            }
-            else -> {
-                holder.itemView.findViewById<ImageView>(R.id.watch_image).visibility = View.GONE
-            }
-
-        }
-
-        holder.itemView.setOnClickListener { view ->
-            val bundle = bundleOf("movieId" to movie.id)
-
-            view.findNavController().navigate(R.id.movieDetailsFragment, bundle)
-            KeyboardBehaviour.hideKeyboard(view.context as Activity)
-        }
         holder.bind(movie)
 
     }

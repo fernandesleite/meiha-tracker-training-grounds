@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import com.moviedb.databinding.FragmentMovieRecommendationsBinding
 import com.moviedb.feature.movieDetails.viewModel.MovieDetailsViewModel
 import com.moviedb.feature.movieList.ui.adapter.MovieListAdapter
@@ -14,15 +13,15 @@ class MovieRecommendationsFragment(val viewModel: MovieDetailsViewModel) : Fragm
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         retainInstance = true
+        val adapter = MovieListAdapter()
         val binding = FragmentMovieRecommendationsBinding.inflate(inflater)
-        binding.lifecycleOwner = this
-        binding.viewModel = viewModel
-        binding.movieList.adapter = MovieListAdapter()
-        viewModel.recommendations.observe(viewLifecycleOwner, Observer {
+        binding.movieList.adapter = adapter
+        viewModel.recommendations.observe(viewLifecycleOwner) { recommendations ->
             binding.progressBar.visibility = View.GONE
-        })
+            adapter.submitList(recommendations)
+        }
         return binding.root
     }
 }

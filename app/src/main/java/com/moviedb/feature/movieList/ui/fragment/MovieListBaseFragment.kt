@@ -40,8 +40,6 @@ abstract class MovieListBaseFragment : Fragment() {
         retainInstance = true
         binding = FragmentMovieListBaseBinding.inflate(inflater)
         binding.apply {
-            lifecycleOwner = this@MovieListBaseFragment
-            viewModel = viewModel
             movieList.adapter = adapter
         }
         mAdapter = binding.movieList.adapter as MovieListAdapter

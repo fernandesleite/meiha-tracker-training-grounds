@@ -23,6 +23,7 @@ import com.moviedb.R
 import com.moviedb.databinding.FragmentMovieDetailsBinding
 import com.moviedb.feature.movieDetails.ui.adapter.MovieDetailsPagerAdapter
 import com.moviedb.feature.movieDetails.viewModel.MovieDetailsViewModel
+import com.moviedb.util.BindingUtils
 import jp.wasabeef.glide.transformations.BlurTransformation
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.ParseException
@@ -49,9 +50,6 @@ class MovieDetailsFragment : Fragment() {
         movieDetailsViewModel.getMovieInfo(movieId)
 
         binding = FragmentMovieDetailsBinding.inflate(inflater)
-
-        binding.lifecycleOwner = this
-        binding.viewModel = movieDetailsViewModel
         val toolbar = binding.toolbar
         NavigationUI.setupWithNavController(
             toolbar,
@@ -102,23 +100,29 @@ class MovieDetailsFragment : Fragment() {
             true
         }
 
-        movieDetailsViewModel.details.observe(viewLifecycleOwner, Observer {
+        movieDetailsViewModel.details.observe(viewLifecycleOwner) { details ->
 
             binding.apply {
-                genreList.text = it.genres.joinToString { genre ->
+                collapsingToolbar.title = details.title
+                backdropImage.contentDescription = details.backdrop_path
+                runtime.text = getString(R.string.runtimeFormat, details.runtime.toString())
+                expandedTitle.text = details.title
+                movieImage.contentDescription = details.poster_path
+                BindingUtils.bindImage(movieImage, details.poster_path)
+                genreList.text = details.genres.joinToString { genre ->
                     genre.name
                 }
                 val parser = SimpleDateFormat("yyyy-MM-dd", Locale.US)
                 val formatter = SimpleDateFormat("MMM yyyy", Locale.US)
                 try {
-                    val output = formatter.format(parser.parse(it.release_date)!!)
+                    val output = formatter.format(parser.parse(details.release_date)!!)
                     monthYearRelease.text = output
-                    voteScore.text = it.vote_average.toString()
+                    voteScore.text = details.vote_average.toString()
                 } catch (e: ParseException) {
                     voteScore.text = "-"
                 }
 
-                val fullUri = "https://image.tmdb.org/t/p/original${it.backdrop_path}"
+                val fullUri = "https://image.tmdb.org/t/p/original${details.backdrop_path}"
                 val imgUri = fullUri.toUri().buildUpon().scheme("https").build()
                 context?.let { context ->
                     Glide.with(context)
@@ -153,7 +157,7 @@ class MovieDetailsFragment : Fragment() {
                         .into(backdropImage)
                 }
             }
-        })
+        }
         return binding.root
     }
 

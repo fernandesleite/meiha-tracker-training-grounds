@@ -7,14 +7,19 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.moviedb.databinding.ItemListCreditsBinding
 import com.moviedb.network.model.TMDbMovieCredits
+import com.moviedb.util.BindingUtils
 
 class MovieCreditsAdapter :
     ListAdapter<TMDbMovieCredits.Cast, MovieCreditsAdapter.CreditsViewHolder>(DiffCallback) {
     class CreditsViewHolder(private val binding: ItemListCreditsBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(credits: TMDbMovieCredits.Cast) {
-            binding.credits = credits
-            binding.executePendingBindings()
+            binding.apply {
+                BindingUtils.bindImage(castImage, credits.profile_path)
+                castImage.contentDescription = credits.name
+                castName.text = credits.name
+                castCharacter.text = credits.character
+            }
         }
     }
 

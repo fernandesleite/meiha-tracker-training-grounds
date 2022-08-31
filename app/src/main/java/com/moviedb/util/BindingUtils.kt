@@ -1,0 +1,55 @@
+package com.moviedb.util
+
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.core.net.toUri
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.moviedb.R
+import com.moviedb.feature.movieDetails.ui.adapter.MovieCreditsAdapter
+import com.moviedb.feature.movieList.ui.adapter.MovieListAdapter
+import com.moviedb.network.model.TMDbMovieCredits
+import com.moviedb.persistence.model.Movie
+import java.text.NumberFormat
+import java.text.SimpleDateFormat
+import java.util.*
+
+class BindingUtils {
+    companion object {
+        fun bindImage(imgView: ImageView, imgUrl: String?) {
+            imgUrl.let {
+                if (it == null) {
+                    Glide.with(imgView.context).load(R.drawable.ic_broken_image).into(imgView)
+                } else {
+                    val fullUri = "https://image.tmdb.org/t/p/original$imgUrl"
+                    val imgUri = fullUri.toUri().buildUpon().scheme("https").build()
+                    Glide.with(imgView.context)
+                        .load(imgUri)
+                        .placeholder(R.drawable.ic_broken_image)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .transform(RoundedCorners(8))
+                        .into(imgView)
+                }
+            }
+        }
+
+        fun bindMovieDateYear(textView: TextView, date: String?) {
+            try {
+                val parser = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+                val formatter = SimpleDateFormat("yyyy", Locale.US)
+                val output = formatter.format(parser.parse(date)!!)
+                textView.text = output.toString()
+            } catch (e: Exception) {
+                textView.text = "-"
+            }
+        }
+
+        fun bindIntToCurrency(textView: TextView, int: Long) {
+            val currency = NumberFormat.getInstance(Locale.US).format(int)
+            textView.text = if (int == 0.toLong()) "-" else "$$currency.00"
+        }
+    }
+}
+
