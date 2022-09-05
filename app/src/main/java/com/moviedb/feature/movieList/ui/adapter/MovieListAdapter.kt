@@ -60,14 +60,14 @@ class MovieListAdapter : ListAdapter<Movie, MovieListAdapter.MovieViewHolder>(Di
         if (!currentList.containsAll(items)) {
             list.addAll(items)
             submitList(list)
-            notifyDataSetChanged()
+            notifyItemRangeChanged(currentList.lastIndex, itemCount)
         }
     }
 
     fun removeItems() {
         list.clear()
         submitList(list)
-        notifyDataSetChanged()
+        notifyItemRangeChanged(currentList.lastIndex, itemCount)
     }
 
     companion object DiffCallback : DiffUtil.ItemCallback<Movie>() {
