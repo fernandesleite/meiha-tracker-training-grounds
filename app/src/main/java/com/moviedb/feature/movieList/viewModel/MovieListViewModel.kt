@@ -121,8 +121,8 @@ class MovieListViewModel(
         refreshDataFromRepository()
     }
 
-    fun getMovie(movieId: Int): LiveData<Int> {
-        return movieRepository.getMovie(movieId)
+    fun getMovieCategory(movieId: Int): LiveData<Int> {
+        return movieRepository.getMovieCategory(movieId)
     }
 
     fun getSearchQuery(query: String) {

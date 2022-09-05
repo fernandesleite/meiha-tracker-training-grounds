@@ -31,12 +31,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class MovieDetailsFragment : Fragment() {
-
-//    private lateinit var viewModel: MovieDetailsViewModel
-//    private lateinit var viewModelFactory: MovieDetailsViewModelFactory
-
-    private lateinit var binding: FragmentMovieDetailsBinding
-
+        private lateinit var binding: FragmentMovieDetailsBinding
 
     val movieDetailsViewModel: MovieDetailsViewModel by viewModel()
 
@@ -44,7 +39,6 @@ class MovieDetailsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val activity = requireNotNull(this.activity)
         val movieId = requireArguments().getInt("movieId")
 
         movieDetailsViewModel.getMovieInfo(movieId)
@@ -56,10 +50,10 @@ class MovieDetailsFragment : Fragment() {
             NavHostFragment.findNavController(requireParentFragment())
         )
 
-        movieDetailsViewModel.getMovie(movieId).observe(viewLifecycleOwner, Observer { int ->
+        movieDetailsViewModel.getMovieCategory(movieId).observe(viewLifecycleOwner) { category ->
             toolbar.menu.clear()
             binding.apply {
-                when (int) {
+                when (category) {
                     1 -> {
                         watchImage.visibility = View.VISIBLE
                         watchImage.setImageResource(R.drawable.ic_check_circle_18dp)
@@ -79,11 +73,11 @@ class MovieDetailsFragment : Fragment() {
                     }
                 }
             }
-        })
+        }
 
         toolbar.setOnMenuItemClickListener { item ->
             movieDetailsViewModel.apply {
-                details.observe(viewLifecycleOwner, Observer {
+                details.observe(viewLifecycleOwner) {
                     when (item.itemId) {
                         R.id.add_watched -> {
                             movieToCache(1, it.id)
@@ -95,7 +89,7 @@ class MovieDetailsFragment : Fragment() {
                             deleteMovie(it.id)
                         }
                     }
-                })
+                }
             }
             true
         }
@@ -167,8 +161,7 @@ class MovieDetailsFragment : Fragment() {
         val viewPager = binding.viewpager
         viewPager.adapter = MovieDetailsPagerAdapter(this, movieDetailsViewModel)
 
-        TabLayoutMediator(binding.tabs, binding.viewpager,
-            TabLayoutMediator.TabConfigurationStrategy { tab, position ->
+        TabLayoutMediator(binding.tabs, binding.viewpager) { tab, position ->
                 when (position) {
                     0 -> {
                         tab.text = getString(R.string.overview)
@@ -180,7 +173,7 @@ class MovieDetailsFragment : Fragment() {
                         tab.text = getString(R.string.more_like_this)
                     }
                 }
-            }).attach()
+            }.attach()
     }
 
     override fun onResume() {

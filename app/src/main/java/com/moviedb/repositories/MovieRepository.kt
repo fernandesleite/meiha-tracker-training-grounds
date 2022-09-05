@@ -35,8 +35,8 @@ class MovieRepository(
         }
     }
 
-    fun getMovie(movieId: Int): LiveData<Int> {
-        return database.movieDao.getMovie(movieId)
+    fun getMovieCategory(movieId: Int): LiveData<Int> {
+        return database.movieDao.getMovieCategory(movieId)
     }
 
     fun getWatchedMovies(): LiveData<List<Movie>> {
