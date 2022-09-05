@@ -1,4 +1,4 @@
-# Meiha - Android Movie Tracker
+# Meiha - Android Movie Tracker (2022)
 Android app to track and search Movies from [The Movie Database API](https://developers.themoviedb.org) using
 
   - Kotlin
