@@ -10,6 +10,7 @@ Android app to track and search Movies from [The Movie Database API](https://dev
   - Gson
   - Moshi
   - Koin
+  - Corroutines
   
 # Demo
 <img src="https://github.com/fernandesleite/MovieDB-Android-Demo/blob/master/screenshots/working_App.gif" width="320" height="640">
