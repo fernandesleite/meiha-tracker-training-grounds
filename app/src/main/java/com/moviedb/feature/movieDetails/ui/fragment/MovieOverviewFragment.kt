@@ -14,8 +14,7 @@ class MovieOverviewFragment(var viewModel: MovieDetailsViewModel) : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        retainInstance = true
+    ): View {
         val binding = FragmentMovieOverviewBinding.inflate(inflater)
         viewModel.details.observe(viewLifecycleOwner) { details ->
             binding.synopsis.text = details.overview

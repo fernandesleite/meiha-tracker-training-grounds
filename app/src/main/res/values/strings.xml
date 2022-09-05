@@ -23,4 +23,7 @@
     <string name="overview">Overview</string>
     <string name="credits">Credits</string>
     <string name="more_like_this">More Like This</string>
+    <string name="generic_error_message">Sorry, try again later.</string>
+    <string name="internet_connection_error">No internet connection.</string>
+    <string name="floating_button">Floating Button</string>
 </resources>

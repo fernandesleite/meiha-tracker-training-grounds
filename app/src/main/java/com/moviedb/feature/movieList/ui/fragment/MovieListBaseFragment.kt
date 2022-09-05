@@ -37,23 +37,27 @@ abstract class MovieListBaseFragment : Fragment() {
         val activity = requireNotNull(this.activity)
         activity.findViewById<BottomNavigationView>(R.id.bottom_navigation).visibility =
             View.VISIBLE
-        retainInstance = true
         binding = FragmentMovieListBaseBinding.inflate(inflater)
         binding.apply {
             movieList.adapter = adapter
         }
         mAdapter = binding.movieList.adapter as MovieListAdapter
-        getMovieList().observe(viewLifecycleOwner, Observer {
+        getMovieList().observe(viewLifecycleOwner) {
             it.map { movie ->
-                movieListViewModel.getMovie(movie.id).observe(viewLifecycleOwner, Observer { int ->
+                movieListViewModel.getMovie(movie.id).observe(viewLifecycleOwner){ int ->
                     mAdapter.notifyDataSetChanged()
                     movie.category = int
-                })
+                }
             }
             mAdapter.addItems(it.toMutableList())
             binding.progressBar.visibility = View.GONE
             isLoading = true
-        })
+        }
+
+        movieListViewModel.errorEvent.observe(viewLifecycleOwner) {
+            binding.errorScreen.visibility = View.VISIBLE
+            binding.errorMessage.text = it
+        }
 
         return binding.root
     }

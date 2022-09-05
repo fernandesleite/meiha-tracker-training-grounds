@@ -3,15 +3,10 @@ package com.moviedb.util
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.net.toUri
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.moviedb.R
-import com.moviedb.feature.movieDetails.ui.adapter.MovieCreditsAdapter
-import com.moviedb.feature.movieList.ui.adapter.MovieListAdapter
-import com.moviedb.network.model.TMDbMovieCredits
-import com.moviedb.persistence.model.Movie
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -37,10 +32,17 @@ class BindingUtils {
 
         fun bindMovieDateYear(textView: TextView, date: String?) {
             try {
-                val parser = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-                val formatter = SimpleDateFormat("yyyy", Locale.US)
-                val output = formatter.format(parser.parse(date)!!)
-                textView.text = output.toString()
+                date?.let {
+                    val parser = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+                    val formatter = SimpleDateFormat("yyyy", Locale.US)
+                    val dateParsed = parser.parse(it)
+                    if (dateParsed != null) {
+                        val output = formatter.format(dateParsed)
+                        textView.text = output.toString()
+                    } else {
+                        textView.text = "-"
+                    }
+                }
             } catch (e: Exception) {
                 textView.text = "-"
             }

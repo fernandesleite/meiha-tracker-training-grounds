@@ -1,24 +1,25 @@
 package com.moviedb.feature.movieList.viewModel
 
+import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.moviedb.R
 import com.moviedb.persistence.model.Movie
 import com.moviedb.repositories.GenreRepository
 import com.moviedb.repositories.MovieRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import com.moviedb.util.Response
 import kotlinx.coroutines.launch
 import java.util.*
 
-class MovieListViewModel(private val movieRepository: MovieRepository, private val genreRepository: GenreRepository) : ViewModel() {
+class MovieListViewModel(
+    private val application: Application,
+    private val movieRepository: MovieRepository,
+    private val genreRepository: GenreRepository
+) : ViewModel() {
 
-    private var viewModelJob = Job()
-    private val coroutineScope = CoroutineScope(viewModelJob + Dispatchers.Main)
-
-    val genres = genreRepository.genres
     private val _page = MutableLiveData<Int>()
     val page: LiveData<Int>
         get() = _page
@@ -53,6 +54,10 @@ class MovieListViewModel(private val movieRepository: MovieRepository, private v
     val toWatch: LiveData<List<Movie>>
         get() = movieRepository.getToWatchMovies()
 
+    private val _errorEvent = MutableLiveData<String>()
+    val errorEvent: LiveData<String>
+        get() = _errorEvent
+
     private val country = Locale.getDefault().country
     private val language = Locale.getDefault().language
 
@@ -62,41 +67,47 @@ class MovieListViewModel(private val movieRepository: MovieRepository, private v
     }
 
     private fun refreshDataFromRepository() {
-        coroutineScope.launch {
+        viewModelScope.launch {
             try {
                 genreRepository.refreshGenresOfflineCache(language)
                 movieRepository.refreshMoviesOfflineCache()
-                _popularMovies.value = _page.value?.let {
-                    movieRepository.getPopularMovies(
-                        it,
-                        country,
-                        language
+                _page.value?.let { page ->
+                    fetchMovieListData(
+                        movieRepository.getPopularMovies(page, country, language),
+                        _popularMovies
+                    )
+                    fetchMovieListData(
+                        movieRepository.getUpcomingMovies(page, country, language),
+                        _upcomingMovies
+                    )
+                    fetchMovieListData(
+                        movieRepository.getTopRatedMovies(page, country, language),
+                        _topRatedMovies
+                    )
+                    fetchMovieListData(
+                        movieRepository.getNowPlayingMovies(page, country, language),
+                        _nowPlayingMovies
                     )
                 }
-                _upcomingMovies.value = _page.value?.let {
-                    movieRepository.getUpcomingMovies(
-                        it,
-                        country,
-                        language
-                    )
-                }
-                _topRatedMovies.value = _page.value?.let {
-                    movieRepository.getTopRatedMovies(
-                        it,
-                        country,
-                        language
-                    )
-                }
-                _nowPlayingMovies.value =
-                    _page.value?.let {
-                        movieRepository.getNowPlayingMovies(
-                            it,
-                            country,
-                            language
-                        )
-                    }
             } catch (e: Exception) {
                 Log.e("MovieListViewModel", e.message, e)
+            }
+        }
+    }
+
+    private fun fetchMovieListData(
+        response: Response<List<Movie>>,
+        list: MutableLiveData<List<Movie>>
+    ) {
+        when (response) {
+            is Response.Success -> {
+                list.value = response.data!!
+            }
+            is Response.GenericError -> {
+                _errorEvent.value = application.getString(R.string.generic_error_message)
+            }
+            is Response.NetworkError -> {
+                _errorEvent.value = application.getString(R.string.internet_connection_error)
             }
         }
     }
@@ -116,17 +127,14 @@ class MovieListViewModel(private val movieRepository: MovieRepository, private v
 
     fun getSearchQuery(query: String) {
         _searchQuery = query
-        coroutineScope.launch {
+        viewModelScope.launch {
             try {
-                _searchMovies.value =
-                    _page.value?.let {
-                        movieRepository.getSearchMovie(
-                            it,
-                            _searchQuery,
-                            country,
-                            language
-                        )
-                    }
+                _page.value?.let { page ->
+                    fetchMovieListData(
+                        movieRepository.getSearchMovie(page, _searchQuery, country, language),
+                        _searchMovies
+                    )
+                }
 
             } catch (e: Exception) {
                 Log.e("MovieListViewModel", e.message, e)

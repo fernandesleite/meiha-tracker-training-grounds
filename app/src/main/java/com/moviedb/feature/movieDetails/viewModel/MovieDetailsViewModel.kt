@@ -1,20 +1,26 @@
 package com.moviedb.feature.movieDetails.viewModel
 
+import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.moviedb.R
 import com.moviedb.network.model.TMDbMovieCredits
 import com.moviedb.network.model.TMDbMovieDetails
 import com.moviedb.persistence.model.Movie
 import com.moviedb.repositories.MovieRepository
+import com.moviedb.util.Response
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.util.*
 
-class MovieDetailsViewModel(private val movieRepository: MovieRepository) :
+class MovieDetailsViewModel(
+    private val application: Application,
+    private val movieRepository: MovieRepository
+) :
     ViewModel() {
 
     private val viewModelJob = Job()
@@ -32,6 +38,10 @@ class MovieDetailsViewModel(private val movieRepository: MovieRepository) :
     val recommendations: LiveData<List<Movie>>
         get() = _recommendations
 
+    private val _errorEvent = MutableLiveData<String>()
+    val errorEvent: LiveData<String>
+        get() = _errorEvent
+
     private val country = Locale.getDefault().country
     private val language = Locale.getDefault().language
 
@@ -39,9 +49,12 @@ class MovieDetailsViewModel(private val movieRepository: MovieRepository) :
     fun getMovieInfo(movieId: Int) {
         try {
             coroutineScope.launch {
-                _details.value = movieRepository.getMovieDetails(movieId, language)
-                _credits.value = movieRepository.getMovieCredits(movieId)
-                _recommendations.value = movieRepository.getMovieRecommendations(movieId, language)
+                fetchMovieListData(movieRepository.getMovieDetails(movieId, language), _details)
+                fetchMovieListData(movieRepository.getMovieCredits(movieId), _credits)
+                fetchMovieListData(
+                    movieRepository.getMovieRecommendations(movieId, language),
+                    _recommendations
+                )
             }
         } catch (e: Exception) {
             Log.e("MovieDetailsViewModel", e.message, e)
@@ -69,6 +82,20 @@ class MovieDetailsViewModel(private val movieRepository: MovieRepository) :
             }
         } catch (e: Exception) {
             Log.e("MovieDetailsViewModel", e.message, e)
+        }
+    }
+
+    private fun fetchMovieListData(response: Response<*>, list: MutableLiveData<*>) {
+        when (response) {
+            is Response.Success -> {
+                list.value = response.data!!
+            }
+            is Response.GenericError -> {
+                _errorEvent.value = application.getString(R.string.generic_error_message)
+            }
+            is Response.NetworkError -> {
+                _errorEvent.value = application.getString(R.string.internet_connection_error)
+            }
         }
     }
 }

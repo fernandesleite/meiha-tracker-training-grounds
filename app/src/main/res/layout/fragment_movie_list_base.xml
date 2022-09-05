@@ -42,7 +42,23 @@
             android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/spacing_normal"
             android:src="@drawable/ic_arrow_upward_black_18dp"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:contentDescription="@string/floating_button" />
+
+        <FrameLayout
+            android:id="@+id/error_screen"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimaryDark"
+            android:visibility="gone">
+            <TextView
+                android:id="@+id/error_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="@dimen/big_title_size"
+                android:textColor="@color/text_primary"/>
+        </FrameLayout>
     </FrameLayout>
 
 </LinearLayout>
