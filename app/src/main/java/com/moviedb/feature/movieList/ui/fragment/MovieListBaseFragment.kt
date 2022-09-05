@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -33,33 +32,49 @@ abstract class MovieListBaseFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
+        initializeView(inflater)
+        initializeObservers()
+        return binding.root
+    }
+
+    private fun initializeView(inflater: LayoutInflater) {
+        binding = FragmentMovieListBaseBinding.inflate(inflater)
+        mAdapter = adapter
+
         val activity = requireNotNull(this.activity)
         activity.findViewById<BottomNavigationView>(R.id.bottom_navigation).visibility =
             View.VISIBLE
-        binding = FragmentMovieListBaseBinding.inflate(inflater)
+
         binding.apply {
             movieList.adapter = adapter
         }
-        mAdapter = binding.movieList.adapter as MovieListAdapter
+    }
+
+    private fun initializeObservers() {
         getMovieList().observe(viewLifecycleOwner) {
-            it.map { movie ->
-                movieListViewModel.getMovie(movie.id).observe(viewLifecycleOwner){ int ->
-                    mAdapter.notifyDataSetChanged()
-                    movie.category = int
-                }
-            }
-            mAdapter.addItems(it.toMutableList())
-            binding.progressBar.visibility = View.GONE
-            isLoading = true
+            setMovieListPresentation(it)
         }
 
         movieListViewModel.errorEvent.observe(viewLifecycleOwner) {
-            binding.errorScreen.visibility = View.VISIBLE
-            binding.errorMessage.text = it
+            setErrorPresentation(it)
         }
+    }
 
-        return binding.root
+    private fun setErrorPresentation(it: String?) {
+        binding.errorScreen.visibility = View.VISIBLE
+        binding.errorMessage.text = it
+    }
+
+    private fun setMovieListPresentation(movieList: List<Movie>) {
+        movieList.map { movie ->
+            movieListViewModel.getMovieCategory(movie.id).observe(viewLifecycleOwner) { category ->
+                movie.category = category
+            }
+        }
+        mAdapter.addItems(movieList.toMutableList())
+        binding.progressBar.visibility = View.GONE
+        isLoading = true
     }
 
     fun addPagination() {
