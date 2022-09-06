@@ -18,8 +18,8 @@ class BindingUtils {
                 if (it == null) {
                     Glide.with(imgView.context).load(R.drawable.ic_broken_image).into(imgView)
                 } else {
-                    val fullUri = "https://image.tmdb.org/t/p/original$imgUrl"
-                    val imgUri = fullUri.toUri().buildUpon().scheme("https").build()
+                    val fullUri = "${Constants.FULL_IMAGE_IRL}$imgUrl"
+                    val imgUri = fullUri.toUri().buildUpon().scheme(Constants.SCHEME).build()
                     Glide.with(imgView.context)
                         .load(imgUri)
                         .placeholder(R.drawable.ic_broken_image)
@@ -30,11 +30,15 @@ class BindingUtils {
             }
         }
 
-        fun bindMovieDateYear(textView: TextView, date: String?) {
+        fun bindMovieDateYear(textView: TextView, date: String?, onlyYear: Boolean) {
             try {
                 date?.let {
-                    val parser = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-                    val formatter = SimpleDateFormat("yyyy", Locale.US)
+                    val parser = SimpleDateFormat(Constants.DATE_YEAR_MONTH_DAY, Locale.US)
+                    val formatter = if (onlyYear) {
+                        SimpleDateFormat(Constants.DATE_YEAR, Locale.US)
+                    } else {
+                        SimpleDateFormat(Constants.DATE_MONTH_YEAR, Locale.US)
+                    }
                     val dateParsed = parser.parse(it)
                     if (dateParsed != null) {
                         val output = formatter.format(dateParsed)
