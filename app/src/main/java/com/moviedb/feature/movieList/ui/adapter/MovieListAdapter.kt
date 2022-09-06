@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.moviedb.R
 import com.moviedb.databinding.ItemListMovieBinding
+import com.moviedb.feature.movieDetails.ui.fragment.MovieDetailsFragment
 import com.moviedb.persistence.model.Movie
 import com.moviedb.util.BindingUtils
 import com.moviedb.util.KeyboardBehaviour
@@ -29,13 +30,13 @@ class MovieListAdapter : ListAdapter<Movie, MovieListAdapter.MovieViewHolder>(Di
                 navigateToMovieDetails(movie)
 
                 BindingUtils.bindImage(imagePoster, movie.poster_path)
-                BindingUtils.bindMovieDateYear(movieReleaseDate, movie.release_date)
+                BindingUtils.bindMovieDateYear(movieReleaseDate, movie.release_date, true)
             }
         }
 
         private fun navigateToMovieDetails(movie: Movie) {
             itemView.setOnClickListener { view ->
-                val bundle = bundleOf("movieId" to movie.id)
+                val bundle = bundleOf(MovieDetailsFragment.MOVIE_ID to movie.id)
                 view.findNavController().navigate(R.id.movieDetailsFragment, bundle)
                 KeyboardBehaviour.hideKeyboard(view.context as Activity)
             }
