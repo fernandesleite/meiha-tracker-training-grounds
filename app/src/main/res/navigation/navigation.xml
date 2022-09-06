@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/movieList"
-        android:name="com.moviedb.feature.movieList.ui.fragment.MovieList"
+        android:name="com.moviedb.feature.movieList.ui.fragment.MovieListFragment"
         android:label="MovieList">
         <action
             android:id="@+id/action_movieList_to_movieDetailsFragment"

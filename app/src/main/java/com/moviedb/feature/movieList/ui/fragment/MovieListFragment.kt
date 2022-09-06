@@ -11,20 +11,21 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.tabs.TabLayoutMediator
 import com.moviedb.R
 import com.moviedb.databinding.FragmentMovieDetailsBinding
+import com.moviedb.databinding.FragmentMovieListBinding
 import com.moviedb.feature.movieList.ui.adapter.MovieListPagerAdapter
 import com.moviedb.feature.movieList.viewModel.MovieListViewModel
 import com.moviedb.util.KeyboardBehaviour
-class MovieList : Fragment() {
+class MovieListFragment : Fragment() {
 
     lateinit var viewModel: MovieListViewModel
-    private lateinit var viewBinding: FragmentMovieDetailsBinding
+    private lateinit var viewBinding: FragmentMovieListBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         KeyboardBehaviour.hideKeyboard(context as Activity)
-        viewBinding = FragmentMovieDetailsBinding.inflate(layoutInflater)
+        viewBinding = FragmentMovieListBinding.inflate(layoutInflater)
         return viewBinding.root
     }
 
@@ -35,7 +36,6 @@ class MovieList : Fragment() {
         val toolbar = viewBinding.toolbar
         val tabs = viewBinding.tabs
 
-        viewBinding.appBarLayout.setExpanded(false)
         viewPager.adapter = MovieListPagerAdapter(this)
 
         toolbar.title = getString(R.string.explore)
@@ -49,8 +49,7 @@ class MovieList : Fragment() {
             } else false
         }
 
-        TabLayoutMediator(tabs, viewPager,
-            TabLayoutMediator.TabConfigurationStrategy { tab, position ->
+        TabLayoutMediator(tabs, viewPager) { tab, position ->
                 when (position) {
                     0 -> {
                         tab.text = getString(R.string.popular)
@@ -65,7 +64,7 @@ class MovieList : Fragment() {
                         tab.text = getString(R.string.top_rated)
                     }
                 }
-            }).attach()
+            }.attach()
     }
 }
 
