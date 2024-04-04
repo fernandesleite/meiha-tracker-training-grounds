@@ -27,7 +27,6 @@ import com.moviedb.feature.movieDetails.viewModel.MovieDetailsViewModel
 import com.moviedb.network.model.TMDbMovieDetails
 import com.moviedb.util.BindingUtils
 import com.moviedb.util.Constants
-import jp.wasabeef.glide.transformations.BlurTransformation
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MovieDetailsFragment : Fragment() {
@@ -188,7 +187,6 @@ class MovieDetailsFragment : Fragment() {
                 })
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .transform(RoundedCorners(8))
-                .apply(RequestOptions.bitmapTransform(BlurTransformation(15, 1)))
                 .into(backdropImage)
         }
     }

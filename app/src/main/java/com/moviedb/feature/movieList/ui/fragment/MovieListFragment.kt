@@ -19,7 +19,6 @@ class MovieListFragment : Fragment() {
 
     lateinit var viewModel: MovieListViewModel
     private lateinit var viewBinding: FragmentMovieListBinding
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

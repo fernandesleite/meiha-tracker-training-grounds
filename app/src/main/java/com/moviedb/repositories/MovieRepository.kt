@@ -155,6 +155,8 @@ class MovieRepository(
             Response.GenericError(e)
         } catch (e: IOException) {
             Response.NetworkError(e)
+        } catch (e: Exception) {
+            Response.NetworkError(e)
         }
     }
 }

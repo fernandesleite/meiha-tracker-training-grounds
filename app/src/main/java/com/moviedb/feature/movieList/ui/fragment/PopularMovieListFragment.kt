@@ -12,6 +12,6 @@ class PopularMovieListFragment : MovieListBaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        addPagination()
+        addPagination(binding.movieList) { loadMoreItems() }
     }
 }

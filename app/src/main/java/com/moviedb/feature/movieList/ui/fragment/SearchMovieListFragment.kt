@@ -1,7 +1,12 @@
 package com.moviedb.feature.movieList.ui.fragment
 
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
@@ -19,8 +24,21 @@ class SearchMovieListFragment : MovieListBaseFragment() {
         return movieListViewModel.searchMovies
     }
 
+    @SuppressLint("MissingPermission", "NewApi")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+            val connectivityManager = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        val capabilities =  connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+        capabilities.also {
+            if (it != null) {
+                val test = it.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                Log.d("TAG", "onViewCreated: $test")
+            } else {
+                Log.d("TAG", "onViewCreated: false")
+            }
+        }
 
         binding.toolbarLayout.appBar.visibility = View.VISIBLE
         binding.progressBar.visibility = View.GONE
@@ -29,7 +47,7 @@ class SearchMovieListFragment : MovieListBaseFragment() {
             binding.toolbarLayout.toolbar,
             NavHostFragment.findNavController(requireParentFragment())
         )
-        addPagination()
+        addPagination(binding.movieList) { loadMoreItems() }
 
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
 

@@ -77,7 +77,12 @@ abstract class MovieListBaseFragment : Fragment() {
         isLoading = true
     }
 
-    fun addPagination() {
+    fun loadMoreItems() {
+        movieListViewModel.nextPage()
+        isLoading = false
+    }
+
+    fun addPagination(list: RecyclerView, onNewPage: () -> Unit) {
         val toTheTopButton = binding.floatingActionButton
         fun animateFloatingButtonToVisible() {
             toTheTopButton.apply {
@@ -101,10 +106,6 @@ abstract class MovieListBaseFragment : Fragment() {
             animateFloatingButtonToGone()
         }
 
-        fun loadMoreItems() {
-            movieListViewModel.nextPage()
-            isLoading = false
-        }
 
         fun calcPositionToLoadItems(recyclerView: RecyclerView): Boolean {
             val layoutManager = recyclerView.layoutManager as LinearLayoutManager
@@ -113,7 +114,7 @@ abstract class MovieListBaseFragment : Fragment() {
             val firstVisible = layoutManager.findFirstVisibleItemPosition()
             return firstVisible + visibleItemCount >= totalItemCount
         }
-        binding.movieList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy < 0) {
@@ -123,7 +124,7 @@ abstract class MovieListBaseFragment : Fragment() {
                     animateFloatingButtonToVisible()
                 }
                 if (calcPositionToLoadItems(recyclerView) && isLoading) {
-                    loadMoreItems()
+                    onNewPage()
                     binding.progressBar.visibility = View.VISIBLE
                 }
             }
