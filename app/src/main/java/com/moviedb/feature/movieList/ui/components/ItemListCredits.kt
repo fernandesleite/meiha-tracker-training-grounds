@@ -14,12 +14,11 @@ import androidx.compose.ui.unit.dp
 
 @Preview(showBackground = true)
 @Composable
-fun ItemListMovie(
+fun ItemListCredits(
     modifier: Modifier = Modifier,
     coverUrl: String = "",
-    movieTitle: String = "titulo filme",
-    movieSubtitle: String = "Subtitulo filme",
-    releaseDate: String = "18-02-24"
+    castName: String = "Nome ator",
+    castCharacter: String = "Nome Personagem",
 ) {
     Row(
         modifier = modifier
@@ -27,14 +26,13 @@ fun ItemListMovie(
             .height(135.dp)
             .fillMaxHeight()
     ) {
-        MovieCover(modifier = modifier, imageUrl = coverUrl, contentDescription = movieTitle)
+        MovieCover(modifier = modifier, imageUrl = coverUrl, contentDescription = castName)
         Column(
             modifier = modifier.fillMaxHeight(),
             verticalArrangement = Arrangement.Center
         ) {
-            MeihaText(text = releaseDate)
-            MeihaText(text = movieTitle, fontWeight = FontWeight.Bold)
-            MeihaText(text = movieSubtitle)
+            MeihaText(text = castName, fontWeight = FontWeight.Bold)
+            MeihaText(text = castCharacter)
         }
     }
 }
