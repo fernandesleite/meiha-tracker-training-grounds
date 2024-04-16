@@ -11,8 +11,8 @@ import com.moviedb.R
 
 @Composable
 fun MeihaText(
-    text: String,
     modifier: Modifier = Modifier,
+    text: String,
     color: Color = Color.White,
     fontWeight: FontWeight = FontWeight.Normal
 ) {
