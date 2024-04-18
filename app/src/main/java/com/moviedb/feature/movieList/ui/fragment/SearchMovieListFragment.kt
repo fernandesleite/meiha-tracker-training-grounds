@@ -47,7 +47,6 @@ class SearchMovieListFragment : MovieListBaseFragment() {
             binding.toolbarLayout.toolbar,
             NavHostFragment.findNavController(requireParentFragment())
         )
-        addPagination(binding.movieList) { loadMoreItems() }
 
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
 
@@ -66,7 +65,6 @@ class SearchMovieListFragment : MovieListBaseFragment() {
                     }
 
                     override fun onQueryTextChange(newText: String?): Boolean {
-                        mAdapter.removeItems()
                         movieListViewModel.resetPage()
                         movieListViewModel.getSearchQuery(newText ?: "")
                         return false

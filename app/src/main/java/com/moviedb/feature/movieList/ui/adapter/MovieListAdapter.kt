@@ -25,7 +25,6 @@ class MovieListAdapter : ListAdapter<Movie, MovieListAdapter.MovieViewHolder>(Di
     fun bind(movie: Movie) {
       composeView.setContent {
         movie.apply {
-          MaterialTheme {
             if (
               !poster_path.isNullOrEmpty() &&
               !title.isNullOrEmpty() &&
@@ -42,7 +41,6 @@ class MovieListAdapter : ListAdapter<Movie, MovieListAdapter.MovieViewHolder>(Di
                 onClick = { navigateToMovieDetails(movie, composeView) }
               )
             }
-          }
         }
       }
     }

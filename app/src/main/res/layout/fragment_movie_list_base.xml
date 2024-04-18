@@ -23,10 +23,16 @@
             android:clipToPadding="true"
             android:longClickable="false"
             android:padding="6dp"
+            android:visibility="gone"
             android:scrollbars="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             tools:itemCount="23" />
+
+        <androidx.compose.ui.platform.ComposeView
+          android:id="@+id/movie_list_compose_view"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"/>
 
         <ProgressBar
             android:id="@+id/progressBar"

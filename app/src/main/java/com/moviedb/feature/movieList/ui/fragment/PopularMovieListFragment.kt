@@ -9,9 +9,4 @@ class PopularMovieListFragment : MovieListBaseFragment() {
     override fun getMovieList(): LiveData<List<Movie>> {
         return movieListViewModel.popularMovies
     }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        addPagination(binding.movieList) { loadMoreItems() }
-    }
 }

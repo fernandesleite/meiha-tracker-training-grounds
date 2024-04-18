@@ -10,8 +10,4 @@ class NowPlayingMovieListFragment : MovieListBaseFragment() {
         return movieListViewModel.nowPlayingMovies
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        addPagination(binding.movieList) { loadMoreItems() }
-    }
 }

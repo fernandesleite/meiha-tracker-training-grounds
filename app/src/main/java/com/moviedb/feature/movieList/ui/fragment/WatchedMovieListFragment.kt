@@ -14,7 +14,6 @@ class WatchedMovieListFragment: MovieListBaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.toolbarLayout.appBar.visibility = View.VISIBLE
         binding.toolbarLayout.toolbar.title = getString(R.string.watched)
-        mAdapter.removeItems()
     }
 
 }

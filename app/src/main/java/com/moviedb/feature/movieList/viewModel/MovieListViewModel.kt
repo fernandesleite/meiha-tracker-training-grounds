@@ -101,7 +101,7 @@ class MovieListViewModel(
     ) {
         when (response) {
             is Response.Success -> {
-                list.value = response.data!!
+                list.value = list.value?.plus(response.data!!) ?: response.data!!
             }
             is Response.GenericError -> {
                 _errorEvent.value = application.getString(R.string.generic_error_message)
